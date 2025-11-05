@@ -2,14 +2,16 @@ package model;
 
 import model.enums.Genre;
 
-public class BookProduct extends AProduct{
+import java.io.Serializable;
+
+public class BookProduct extends AProduct implements Serializable {
     private String author;
     private int pages;
     private int year;
     private Genre genre;
 
     public BookProduct(String name, double price, String brand, int stock, String author, int pages, int year, Genre genre) {
-        super(name, price, brand, stock);
+        super(stock,name, price, brand);
         this.author = author;
         this.pages = pages;
         this.year = year;
@@ -49,12 +51,30 @@ public class BookProduct extends AProduct{
     }
 
     @Override
+    public String toFileString() {
+        return String.join(";",
+                "BookProduct",
+                name,
+                String.valueOf(price),
+                brand,
+                String.valueOf(stock),
+                author,
+                String.valueOf(pages),
+                String.valueOf(year),
+                genre.name());
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("BookProduct{");
         sb.append("author='").append(author).append('\'');
         sb.append(", pages=").append(pages);
         sb.append(", year=").append(year);
         sb.append(", genre=").append(genre);
+        sb.append(", stock=").append(stock);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", price=").append(price);
+        sb.append(", brand='").append(brand).append('\'');
         sb.append('}');
         return sb.toString();
     }

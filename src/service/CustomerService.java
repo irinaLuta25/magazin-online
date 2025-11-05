@@ -1,9 +1,16 @@
 package service;
 
 import model.Customer;
+import repository.CustomerRepository;
+import repository.Repository;
 
 
 public class CustomerService extends AbstractService<Customer> {
+
+
+    public CustomerService(CustomerRepository repository) {
+        super(repository);
+    }
 
     public Customer getByEmail(String email) {
         for (Customer c : getAll()) {
@@ -12,6 +19,12 @@ public class CustomerService extends AbstractService<Customer> {
             }
         }
         return null;
+    }
+
+    @Override
+    public void displayAll() {
+        System.out.println("\n##################### All Customers #####################");
+        super.displayAll();
     }
 
     @Override

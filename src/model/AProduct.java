@@ -1,17 +1,21 @@
 package model;
 
-public abstract class AProduct {
+import java.io.Serializable;
+
+public abstract class AProduct implements Serializable {
+    protected int stock;
     protected String name;
     protected double price;
     protected String brand;
-    protected int stock;
 
-    public AProduct(String name, double price, String brand, int stock) {
+    public AProduct(int stock, String name, double price, String brand) {
         this.name = name;
         this.price = price;
         this.brand = brand;
         this.stock = stock;
     }
+
+    public abstract String toFileString();
 
 
     public String getName() {
@@ -36,6 +40,14 @@ public abstract class AProduct {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     @Override

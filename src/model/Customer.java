@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Customer {
+public class Customer implements Serializable {
     private String name;
     private String address;
     private String email;
@@ -25,6 +26,10 @@ public class Customer {
 
     public String getEmail() {
         return email;
+    }
+
+    public String toFileString() {
+        return String.join(";", name, address, email);
     }
 
     @Override

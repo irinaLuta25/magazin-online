@@ -1,12 +1,17 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import repository.Repository;
+
+import java.util.*;
 
 public abstract class AbstractService<T> implements Manageable<T> {
-    protected Set<T> items = new HashSet<>();
+    protected Set<T> items = new LinkedHashSet<>();
+    protected Repository<T> repository;
+
+    public AbstractService(Repository<T> repository) {
+        this.repository = repository;
+        this.items.addAll(repository.load());
+    }
 
     @Override
     public void add(T item) {
@@ -14,7 +19,7 @@ public abstract class AbstractService<T> implements Manageable<T> {
             System.out.println("Item already exists!");
         } else {
             items.add(item);
-            System.out.println("Item added!");
+            System.out.println("Item " + item +  " added!");
         }
     }
 
@@ -39,6 +44,24 @@ public abstract class AbstractService<T> implements Manageable<T> {
 
     @Override
     public List<T> getAll() {
+        if(this.items.isEmpty()) {
+            System.out.println("no items");
+        }
         return new ArrayList<>(items);
     }
+
+    @Override
+    public void displayAll() {
+        if (items.isEmpty()) {
+            System.out.println("No items to display.\n");
+            return;
+        }
+
+//        System.out.println("\n--- Displaying all " + items.iterator().next().getClass().getSimpleName() + " entries ---");
+        for (T item : items) {
+            System.out.println(item);
+            System.out.println("------------------");
+        }
+    }
+
 }

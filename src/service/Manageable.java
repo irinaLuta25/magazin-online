@@ -7,4 +7,6 @@ public interface Manageable<T> {
     void remove(T item);
     void update(T item);
     List<T> getAll();
+
+    void displayAll();
 }

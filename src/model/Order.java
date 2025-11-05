@@ -2,19 +2,21 @@ package model;
 
 import model.enums.OrderStatus;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Order {
+public class Order implements Serializable {
 
+    private static int orderCounter=0;
     private int orderNumber;
     private Customer customer;
     private Map<AProduct, Integer> cart;
     private OrderStatus orderStatus;
 
-    public Order(int orderNumber, Customer customer, OrderStatus orderStatus) {
-        this.orderNumber = orderNumber;
+    public Order(Customer customer, OrderStatus orderStatus) {
+        this.orderNumber = ++orderCounter;
         this.customer = customer;
         this.cart = new HashMap<>();
         this.orderStatus = orderStatus;
@@ -30,33 +32,58 @@ public class Order {
 
     public void addToCart(AProduct product, int quantity) {
         if(product!=null && quantity>0) {
+            if(product.getStock()<quantity) {
+                throw new IllegalArgumentException("Stoc insuficient pentru produsul: " + product.getName() + ". Stoc curent: " + product.getStock() + " bucati.");
+            }
+
             this.cart.put(product, this.cart.getOrDefault(product,0) + quantity);
+//            System.out.println("\nAdded to cart: product " + product + " x" + quantity);
+            product.setStock(product.getStock()-quantity);
+//            System.out.println("current stock: "+ product.getStock());
         }
     }
 
     public void displayOrder() {
-        System.out.println("Your order summary:\n");
+        System.out.println("\nOrder #" + this.orderNumber + " summary for customer " + this.customer.getName() + ":\n");
+        System.out.println("~ Status " + this.orderStatus + " ~\n");
         for(Map.Entry<AProduct,Integer> entry : this.cart.entrySet()) {
             int quantity = entry.getValue();
             AProduct product = entry.getKey();
 
             System.out.println(product + " x" + quantity);
         }
+
+        System.out.println("\nTotal: " + calculateTotal());
     }
 
     public void deleteFromCart(AProduct product) {
         if(this.cart.containsKey(product)) {
-            this.cart.remove(product);
-        }
-    }
+            System.out.println("\nInitial stock: " + product.getStock());
 
-    public void updateQuantity(AProduct product, Integer newQuantity) {
-        if(this.cart.containsKey(product)) {
-            this.cart.put(product, newQuantity);
+            int quantity = this.cart.get(product);
+            this.cart.remove(product);
+            product.setStock(product.getStock() + quantity);
+
+            System.out.println("Removed " + quantity + " x " + product.getName() + " from cart.");
+            System.out.println("Updated stock: " + product.getStock());
         } else {
             System.out.println("Product not found in cart.");
         }
     }
+
+    // todo: update-ul trebuie sa verifice intai daca cantitatea noua e valida (in stoc), apoi sa decida daca mareste sau micsoreaza stocul in functie de caz
+//    public void updateQuantity(AProduct product, Integer newQuantity) {
+//        if(this.cart.containsKey(product)) {
+//            System.out.println("\nInitial stock: " + product.getStock());
+//
+//            this.cart.put(product, newQuantity);
+//            product.setStock(newQuantity);
+//
+//            System.out.println("Updated stock for product " + product.getName() + ": " + product.getStock());
+//        } else {
+//            System.out.println("Product not found in cart.");
+//        }
+//    }
 
     public int getOrderNumber() {
         return orderNumber;
